@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using NETCore.MailKit.Core;
 using ParkingPlatform.DataAccess.Data;
 using ParkingPlatform.DataAccess.RepositoryPattern;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
+using ParkingPlatform.Model.DTO.EmailDtosFolder;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+
+
+//Email set up
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+builder.Services.AddScoped<IEmailServices,EmailServices>();
 
 builder.Services.AddCors();
 
