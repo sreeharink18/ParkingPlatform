@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ParkingPlatform.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using ParkingPlatform.DataAccess.Data;
 namespace ParkingPlatform.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250126071629_first")]
+    partial class first
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,8 +239,8 @@ namespace ParkingPlatform.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeSpan>("PenaltyTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("PenaltyTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SlotSize")
                         .HasColumnType("int");
@@ -285,11 +288,11 @@ namespace ParkingPlatform.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<TimeSpan>("ArrivalTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("DepartureTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime?>("DepartureTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ParkingSlotId")
                         .HasColumnType("int");
@@ -342,8 +345,8 @@ namespace ParkingPlatform.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<TimeSpan>("ArrivalWaitingTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("ArrivalWaitingTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()

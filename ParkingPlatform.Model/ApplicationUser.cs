@@ -10,5 +10,7 @@ namespace ParkingPlatform.Model
     public class ApplicationUser : IdentityUser
     {
         public string Name {  get; set; }
+        public  ICollection<UserParkingDetail> UserParkingDetails { get; set; } 
+        public ICollection <WaitingParkingDetail> WaitingParkingDetails { get; set; } 
     }
 }
