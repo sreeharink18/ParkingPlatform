@@ -1,5 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
+using ParkingPlatform.Model.DTO.VehicleTypeDtosFolder;
+using ParkingPlatform.Model;
+using ParkingPlatform.Model.DTO.ParkingSlotDtosFolder;
+using ParkingPlatform.Model.DTO.GateDtosFolder;
 
 namespace ParkingPlatform.Controllers
 {
@@ -7,5 +13,89 @@ namespace ParkingPlatform.Controllers
     [ApiController]
     public class ParkingSlotController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        public ParkingSlotController(IUnitOfWork unitOfWork,IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllParkingSlot()
+        {
+            var parkingslot = await _unitOfWork.ParkingSlotRepository.GetAllAsync();
+            return Ok(parkingslot);
+        }
+
+
+
+        [HttpGet("{parkingslot_id}")]
+        public async Task<IActionResult> GetVehicleById(int parkingslot_id)
+        {
+            var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
+            if (parkingSlot == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parkingSlot);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddVehicle([FromBody] ParkingSlotAddDto parkingslot)
+        {
+            if (parkingslot == null)
+            {
+                return BadRequest("Vehicle is null");
+            }
+            var new_parkingslot = _mapper.Map<ParkingSlot>(parkingslot);
+            var gate=await _unitOfWork.GateRepository.GetAsync(g=>g.Id==parkingslot.GateId);
+            gate.SlotSize = gate.SlotSize + 1;
+            await _unitOfWork.GateRepository.UpdateAsync(gate);
+            await _unitOfWork.ParkingSlotRepository.AddAsync(new_parkingslot);
+            _unitOfWork.Save();
+
+            return CreatedAtAction(nameof(GetAllParkingSlot), new { id = new_parkingslot.Id }, parkingslot);
+        }
+
+        [HttpPut("{parkingslot_id}")]
+        public async Task<IActionResult> UpdateVehicle(int parkingslot_id, [FromBody] ParkingSlotAddDto parkingSlot)
+        {
+            if (parkingSlot == null)
+            {
+                return BadRequest("Vehicle data is invalid");
+            }
+
+            var existing_parkingslot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
+            if (existing_parkingslot == null)
+            {
+                return NotFound();
+            }
+            existing_parkingslot.ParkingSlotNumber = parkingSlot.ParkingSlotNumber;
+            existing_parkingslot.Status = parkingSlot.Status;
+            existing_parkingslot.GateId = parkingSlot.GateId;
+            await _unitOfWork.ParkingSlotRepository.UpdateAsync(existing_parkingslot);
+            _unitOfWork.Save();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{parkingslot_id}")]
+        public async Task<IActionResult> DeleteVehicle(int parkingslot_id)
+        {
+            var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
+            if (parkingSlot == null)
+            {
+                return NotFound();
+            }
+            var gate=await _unitOfWork.GateRepository.GetAsync(g=>g.Id == parkingSlot.GateId);
+            gate.SlotSize =gate.SlotSize- 1;
+            await _unitOfWork.GateRepository.UpdateAsync(gate);
+            await _unitOfWork.ParkingSlotRepository.RemoveAsync(parkingSlot);
+            _unitOfWork.Save();
+
+            return NoContent();
+        }
+
     }
 }

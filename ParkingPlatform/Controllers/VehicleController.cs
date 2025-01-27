@@ -29,10 +29,10 @@ namespace ParkingPlatform.Controllers
 
 
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetVehicleById(int id)
+        [HttpGet("{vehicle_id}")]
+        public async Task<IActionResult> GetVehicleById(int vehicle_id)
         {
-            var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id==id);
+            var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (vehicle == null)
             {
                 return NotFound();
@@ -55,15 +55,15 @@ namespace ParkingPlatform.Controllers
             return CreatedAtAction(nameof(GetAllVehicles), new { id = new_vehicle.Id }, vehicle);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateVehicle(int id, [FromBody] VehicleTypeAddDto vehicle)
+        [HttpPut("{vehicle_id}")]
+        public async Task<IActionResult> UpdateVehicle(int vehicle_id, [FromBody] VehicleTypeAddDto vehicle)
         {
             if (vehicle == null )
             {
                 return BadRequest("Vehicle data is invalid");
             }
 
-            var existingVehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== id);
+            var existingVehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (existingVehicle == null)
             {
                 return NotFound();
@@ -78,10 +78,10 @@ namespace ParkingPlatform.Controllers
             return NoContent();  
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVehicle(int id)
+        [HttpDelete("{vehicle_id}")]
+        public async Task<IActionResult> DeleteVehicle(int vehicle_id)
         {
-            var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id==id);
+            var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (vehicle == null)
             {
                 return NotFound();
