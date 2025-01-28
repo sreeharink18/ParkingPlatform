@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
 using ParkingPlatform.Model;
+using ParkingPlatform.Model.DTO.EmailDtosFolder;
+using static System.Net.WebRequestMethods;
 
 namespace ParkingPlatform.Controllers
 {
@@ -15,10 +17,12 @@ namespace ParkingPlatform.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
         private IUnitOfWork _unitOfWork;
-        public WeatherForecastController(ILogger<WeatherForecastController> logger,IUnitOfWork unitOfWork)
+        private IEmailServices _emailServices;
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IUnitOfWork unitOfWork, IEmailServices emailServices)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _emailServices = emailServices;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -37,6 +41,14 @@ namespace ParkingPlatform.Controllers
         {
             IEnumerable<ApplicationUser> applicationUsers = await _unitOfWork.ApplicationUserRepository.GetAllAsync();
             return applicationUsers;
+        }
+        [HttpPost("sentEmail")]
+        public async Task<IActionResult> SendEmail(EmailSendDto requestDTO)
+        {
+            var message = new Message(requestDTO.Email, "OTP Confirmation", "830223");
+            await _emailServices.SendEmailAsync(message, "SignupOTP");
+            
+            return Ok(message);
         }
     }
 }
