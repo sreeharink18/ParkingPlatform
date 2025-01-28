@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
 using ParkingPlatform.Model;
-
+using ParkingPlatform.Model.DTO;
+using System.Net;
 namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
@@ -18,7 +19,7 @@ namespace ParkingPlatform.Controllers
         public async Task<IActionResult>GetAllWaitingParkingDetails()
         {
             var waitingparkingdetails=await _unitOfWork.WaitingParkingDetailsRepository.GetAllAsync();
-            return Ok(waitingparkingdetails);
+            return Ok(ApiResponseHelper.SuccessResponse( waitingparkingdetails));
         }
 
         [HttpGet("{id}")]
@@ -27,9 +28,9 @@ namespace ParkingPlatform.Controllers
             var waitingparkingdetail=await _unitOfWork.WaitingParkingDetailsRepository.GetAsync(w=>w.Id==id);
             if (waitingparkingdetail == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
-            return Ok(waitingparkingdetail);
+            return Ok(ApiResponseHelper.SuccessResponse(waitingparkingdetail));
         }
 
         [HttpPost]
@@ -37,9 +38,9 @@ namespace ParkingPlatform.Controllers
         {
             if(waitingParkingDetail==null)
             {
-                return BadRequest("waitingparkingdetails are invalid");
+                return BadRequest(ApiResponseHelper.ErrorResponse("waitingparkingdetails are invalid", HttpStatusCode.BadRequest));
             }
-            return CreatedAtAction(nameof(GetAllWaitingParkingDetails),new {id=waitingParkingDetail.Id },waitingParkingDetail);
+            return Ok(ApiResponseHelper.SuccessResponse("Created",HttpStatusCode.Created));
         }
 
         [HttpPut("{id}")]
@@ -47,14 +48,14 @@ namespace ParkingPlatform.Controllers
         {
             if (waitingParkingDetail == null)
             {
-                return BadRequest("waitingparkingdetails are invalid");
+                return BadRequest(ApiResponseHelper.ErrorResponse("waitingparkingdetails are invalid",HttpStatusCode.BadRequest));
             }
             var existing_waitingparkingdetail=await _unitOfWork.WaitingParkingDetailsRepository.GetAsync(w=>w.Id == id);
             if(existing_waitingparkingdetail == null)
             { 
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
-            return NoContent();
+            return Ok(ApiResponseHelper.SuccessResponse("Updated",HttpStatusCode.NoContent));
         }
 
         [HttpDelete("{id}")]
@@ -63,11 +64,11 @@ namespace ParkingPlatform.Controllers
             var existing_waitingparkingdetail = await _unitOfWork.WaitingParkingDetailsRepository.GetAsync(w => w.Id == id);
             if(existing_waitingparkingdetail == null)
             { 
-                return NotFound(); 
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound)); 
             }
             await _unitOfWork.WaitingParkingDetailsRepository.RemoveAsync(existing_waitingparkingdetail);
             _unitOfWork.Save();
-            return NoContent();
+            return Ok(ApiResponseHelper.SuccessResponse("Deleted",HttpStatusCode.NoContent));
 
         }
     }

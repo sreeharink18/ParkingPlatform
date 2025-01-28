@@ -6,7 +6,8 @@ using ParkingPlatform.Model.DTO.VehicleTypeDtosFolder;
 using ParkingPlatform.Model;
 using ParkingPlatform.Model.DTO.ParkingSlotDtosFolder;
 using ParkingPlatform.Model.DTO.GateDtosFolder;
-
+using ParkingPlatform.Model.DTO;
+using System.Net;
 namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
@@ -24,7 +25,7 @@ namespace ParkingPlatform.Controllers
         public async Task<IActionResult> GetAllParkingSlot()
         {
             var parkingslot = await _unitOfWork.ParkingSlotRepository.GetAllAsync();
-            return Ok(parkingslot);
+            return Ok(ApiResponseHelper.SuccessResponse( parkingslot));
         }
 
 
@@ -35,7 +36,7 @@ namespace ParkingPlatform.Controllers
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAllAsync(v => v.GateId == gate_id );
             if (parkingSlot == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
 
             return Ok(parkingSlot);
@@ -46,7 +47,7 @@ namespace ParkingPlatform.Controllers
         public async Task<IActionResult> GetAllParkingSlotByVehicleType(int vehicle_id)
         {
             var parkingSlots = await _unitOfWork.ParkingSlotRepository.GetAllAsync( ps => ps.Gate.VehicleTypeId == vehicle_id);
-            return Ok(parkingSlots);
+            return Ok(ApiResponseHelper.SuccessResponse(parkingSlots));
         }
 
         [HttpGet("{parkingslot_id}")]
@@ -55,10 +56,10 @@ namespace ParkingPlatform.Controllers
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
             if (parkingSlot == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
 
-            return Ok(parkingSlot);
+            return Ok(ApiResponseHelper.SuccessResponse( parkingSlot));
         }
 
         [HttpPost]
@@ -66,7 +67,7 @@ namespace ParkingPlatform.Controllers
         {
             if (parkingslot == null)
             {
-                return BadRequest("Vehicle is null");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Vehicle is null",HttpStatusCode.BadRequest));
             }
             var new_parkingslot = _mapper.Map<ParkingSlot>(parkingslot);
             var gate=await _unitOfWork.GateRepository.GetAsync(g=>g.Id==parkingslot.GateId);
@@ -75,7 +76,7 @@ namespace ParkingPlatform.Controllers
             await _unitOfWork.ParkingSlotRepository.AddAsync(new_parkingslot);
             _unitOfWork.Save();
 
-            return CreatedAtAction(nameof(GetAllParkingSlot), new { id = new_parkingslot.Id }, parkingslot);
+            return Ok(ApiResponseHelper.SuccessResponse("Cretaed", HttpStatusCode.NoContent));
         }
 
         [HttpPut("{parkingslot_id}")]
@@ -83,13 +84,13 @@ namespace ParkingPlatform.Controllers
         {
             if (parkingSlot == null)
             {
-                return BadRequest("Vehicle data is invalid");
+                return BadRequest(ApiResponseHelper.ErrorResponse( "Vehicle data is invalid",HttpStatusCode.BadRequest));
             }
 
             var existing_parkingslot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
             if (existing_parkingslot == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
             existing_parkingslot.ParkingSlotNumber = parkingSlot.ParkingSlotNumber;
             existing_parkingslot.Status = parkingSlot.Status;
@@ -106,7 +107,7 @@ namespace ParkingPlatform.Controllers
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
             if (parkingSlot == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found", HttpStatusCode.NotFound));
             }
             var gate=await _unitOfWork.GateRepository.GetAsync(g=>g.Id == parkingSlot.GateId);
             gate.SlotSize =gate.SlotSize- 1;
@@ -114,7 +115,7 @@ namespace ParkingPlatform.Controllers
             await _unitOfWork.ParkingSlotRepository.RemoveAsync(parkingSlot);
             _unitOfWork.Save();
 
-            return NoContent();
+            return Ok(ApiResponseHelper.ErrorResponse("Deleted", HttpStatusCode.NoContent));
         }
 
     }

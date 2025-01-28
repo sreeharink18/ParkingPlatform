@@ -6,7 +6,8 @@ using ParkingPlatform.Model.DTO.VehicleTypeDtosFolder;
 using ParkingPlatform.Model;
 using ParkingPlatform.Model.DTO.GateDtosFolder;
 using ParkingPlatform.Model.DTO.ParkingSlotDtosFolder;
-
+using ParkingPlatform.Model.DTO;
+using System.Net;
 namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
@@ -24,7 +25,7 @@ namespace ParkingPlatform.Controllers
         public async Task<IActionResult> GetAllGate()
         {
             var gates = await _unitOfWork.GateRepository.GetAllAsync();
-            return Ok(gates);
+            return Ok(ApiResponseHelper.SuccessResponse(gates));
         }
 
         
@@ -36,10 +37,10 @@ namespace ParkingPlatform.Controllers
             var gate = await _unitOfWork.GateRepository.GetAsync(v => v.Id == gate_id);
             if (gate == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
 
-            return Ok(gate);
+            return Ok(ApiResponseHelper.SuccessResponse(gate));
         }
 
         [HttpPost]
@@ -47,7 +48,7 @@ namespace ParkingPlatform.Controllers
         {
             if (gate == null)
             {
-                return BadRequest("Gate is null");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Gate inputs are invalid"));
             }
             var vehicle_type=await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id==gate.VehicleTypeId);
             if (vehicle_type == null)
@@ -57,7 +58,7 @@ namespace ParkingPlatform.Controllers
             TimeSpan penaltyTime;
             if (!TimeSpan.TryParse(gate.PenaltyTime, out penaltyTime))
             {
-                return BadRequest("Invalid PenaltyTime format. Please use 'hh:mm:ss'.");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Invalid PenaltyTime format. Please use 'hh:mm:ss'."));
             }
             var new_gate = _mapper.Map<Gate>(gate);
             new_gate.PenaltyTime = penaltyTime;
@@ -75,7 +76,7 @@ namespace ParkingPlatform.Controllers
                 await _unitOfWork.ParkingSlotRepository.AddAsync(park_slot);
                 _unitOfWork.Save();
             }
-            return CreatedAtAction(nameof(GetAllGate), new { id = new_gate.Id }, gate);
+            return Ok(ApiResponseHelper.SuccessResponse("Created"));
         }
 
         [HttpPut("{gate_id}")]
@@ -83,7 +84,7 @@ namespace ParkingPlatform.Controllers
         {
             if (gate == null)
             {
-                return BadRequest("Gate data is invalid");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Gate data is invalid"));
             }
             var existing_gate = await _unitOfWork.GateRepository.GetAsync(v => v.Id == gate_id);
             if (existing_gate == null)
@@ -93,7 +94,7 @@ namespace ParkingPlatform.Controllers
             TimeSpan penaltyTime;
             if (!TimeSpan.TryParse(gate.PenaltyTime, out penaltyTime))
             {
-                return BadRequest("Invalid PenaltyTime format. Please use 'hh:mm:ss'.");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Invalid PenaltyTime format. Please use 'hh:mm:ss'."));
             }
             if (existing_gate.SlotSize>gate.SlotSize)
             {
@@ -126,7 +127,7 @@ namespace ParkingPlatform.Controllers
             await _unitOfWork.GateRepository.UpdateAsync(existing_gate);
             _unitOfWork.Save();
             
-            return NoContent();
+            return Ok(ApiResponseHelper.SuccessResponse("Updated",HttpStatusCode.NoContent));
         }
 
         [HttpDelete("{gate_id}")]
@@ -151,7 +152,7 @@ namespace ParkingPlatform.Controllers
             await _unitOfWork.GateRepository.RemoveAsync(gate);
             _unitOfWork.Save();
 
-            return NoContent();
+            return Ok(ApiResponseHelper.SuccessResponse("Deleted", HttpStatusCode.NoContent));
         }
     }
 }

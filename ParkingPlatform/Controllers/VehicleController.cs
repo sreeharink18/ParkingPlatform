@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
 using ParkingPlatform.Model;
+using ParkingPlatform.Model.DTO;
 using ParkingPlatform.Model.DTO.VehicleTypeDtosFolder;
-
+using System.Net;
 namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
@@ -24,7 +25,7 @@ namespace ParkingPlatform.Controllers
         public async Task<IActionResult> GetAllVehicles()
         {
             var vehicles = await _unitOfWork.VehicleRepository.GetAllAsync();
-            return Ok(vehicles);
+            return Ok(ApiResponseHelper.SuccessResponse(vehicles));
         }
 
        
@@ -35,10 +36,10 @@ namespace ParkingPlatform.Controllers
             var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (vehicle == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("not found",HttpStatusCode.NotFound));
             }
 
-            return Ok(vehicle);  
+            return Ok(ApiResponseHelper.SuccessResponse(vehicle));  
         }
 
         [HttpPost]
@@ -46,13 +47,13 @@ namespace ParkingPlatform.Controllers
         {
             if (vehicle == null)
             {
-                return BadRequest("Vehicle is null");
+                return BadRequest(ApiResponseHelper.ErrorResponse( "Vehicle is null",HttpStatusCode.BadRequest));
             }
             var new_vehicle=_mapper.Map<VehicleType>(vehicle);
             await _unitOfWork.VehicleRepository.AddAsync(new_vehicle);  
             _unitOfWork.Save();  
 
-            return CreatedAtAction(nameof(GetAllVehicles), new { id = new_vehicle.Id }, vehicle);
+            return Ok(ApiResponseHelper.SuccessResponse("created",HttpStatusCode.NoContent));
         }
 
         [HttpPut("{vehicle_id}")]
@@ -60,13 +61,13 @@ namespace ParkingPlatform.Controllers
         {
             if (vehicle == null )
             {
-                return BadRequest("Vehicle data is invalid");
+                return BadRequest(ApiResponseHelper.ErrorResponse("Vehicle data is invalid",HttpStatusCode.BadRequest));
             }
 
             var existingVehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (existingVehicle == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
             existingVehicle.PenaltyCharge = vehicle.PenaltyCharge;
             existingVehicle.HourlyCharge = vehicle.HourlyCharge;
@@ -75,7 +76,7 @@ namespace ParkingPlatform.Controllers
             await _unitOfWork.VehicleRepository.UpdateAsync(existingVehicle);  
             _unitOfWork.Save();  
 
-            return NoContent();  
+            return Ok(ApiResponseHelper.SuccessResponse("Updated",HttpStatusCode.NoContent));  
         }
 
         [HttpDelete("{vehicle_id}")]
@@ -84,13 +85,13 @@ namespace ParkingPlatform.Controllers
             var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
             if (vehicle == null)
             {
-                return NotFound();
+                return NotFound(ApiResponseHelper.ErrorResponse("Not found",HttpStatusCode.NotFound));
             }
 
             await _unitOfWork.VehicleRepository.RemoveAsync(vehicle);  
             _unitOfWork.Save();  
 
-            return NoContent();  
+            return Ok(ApiResponseHelper.SuccessResponse("Deleted",HttpStatusCode.NoContent));  
         }
     }
 }
