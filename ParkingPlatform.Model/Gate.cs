@@ -13,8 +13,7 @@ namespace ParkingPlatform.Model
         public int SlotSize {  get; set; }  
         public int VehicleTypeId {  get; set; } 
         public TimeSpan PenaltyTime { get; set; }
-        public virtual VehicleType VehicleType { get; set; }
-        public ICollection<ParkingSlot> ParkingSlots { get; set; }    
+
 
     }
 }

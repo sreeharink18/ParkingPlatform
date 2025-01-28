@@ -3,6 +3,7 @@ using ParkingPlatform.Model;
 using ParkingPlatform.Model.DTO.ApplicationUserDtosFolder;
 using ParkingPlatform.Model.DTO.GateDtosFolder;
 using ParkingPlatform.Model.DTO.ParkingSlotDtosFolder;
+using ParkingPlatform.Model.DTO.UserParkingDetailDtosFolder;
 using ParkingPlatform.Model.DTO.VehicleTypeDtosFolder;
 
 namespace ParkingPlatform.Services
@@ -16,6 +17,10 @@ namespace ParkingPlatform.Services
             CreateMap<VehicleType, VehicleTypeAddDto>().ReverseMap();
             CreateMap<Gate,GateAddDto>().ReverseMap();
             CreateMap<ParkingSlot, ParkingSlotAddDto>().ReverseMap();
+
+            CreateMap<CreateUserParkingDetailRequestDto, UserParkingDetail>();
+            CreateMap<CreateUserParkingDetailRequestDto,WaitingParkingDetail>();
+
             CreateMap<UserRegisterRequestDto, ApplicationUser>()
                   .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
                   .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))

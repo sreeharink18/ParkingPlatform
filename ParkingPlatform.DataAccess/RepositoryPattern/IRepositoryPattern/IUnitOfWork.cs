@@ -11,6 +11,10 @@ namespace ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern
          IApplicationUserRepository ApplicationUserRepository { get; }
          IVehicleRepository VehicleRepository { get; }
          IGateRepository GateRepository { get; }
+        IParkingSlotRepository ParkingSlotRepository { get; }
+        IUserParkingDetailsRepository UserParkingDetailsRepository { get; }
+        IWaitingParkingDetailsRepository WaitingParkingDetailsRepository { get; }
+        
          void Save();
     }
 }
