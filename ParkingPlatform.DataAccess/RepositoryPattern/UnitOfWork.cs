@@ -12,11 +12,14 @@ namespace ParkingPlatform.DataAccess.RepositoryPattern
     {
         private ApplicationDbContext _db;
         public IApplicationUserRepository ApplicationUserRepository { get; private set; }
-
+        public IVehicleRepository VehicleRepository { get; private set; }
+        public IGateRepository GateRepository { get; private set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             ApplicationUserRepository = new ApplicationUserRepository(_db);
+            VehicleRepository = new VehicleRepository(_db);
+            GateRepository = new GateRepository(_db);
         }
 
         public void Save()

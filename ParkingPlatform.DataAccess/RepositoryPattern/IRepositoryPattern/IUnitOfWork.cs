@@ -9,6 +9,8 @@ namespace ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern
     public interface IUnitOfWork
     {
          IApplicationUserRepository ApplicationUserRepository { get; }
+         IVehicleRepository VehicleRepository { get; }
+         IGateRepository GateRepository { get; }
          void Save();
     }
 }
