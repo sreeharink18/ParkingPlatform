@@ -29,7 +29,7 @@ namespace ParkingPlatform.Controllers
 
 
 
-        [HttpGet("get_all_parkingslot_by_gateid/{gate_id}")]
+        [HttpGet("get_all_parkingslot_by_gate/{gate_id}")]
         public async Task<IActionResult> GetAllParkingSlotByGate_Id(int gate_id)
         {
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAllAsync(v => v.GateId == gate_id );
