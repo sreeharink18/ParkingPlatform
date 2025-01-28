@@ -26,7 +26,8 @@ namespace ParkingPlatform.Controllers
             var gates = await _unitOfWork.GateRepository.GetAllAsync();
             return Ok(gates);
         }
-    
+
+        
 
 
         [HttpGet("{gate_id}")]

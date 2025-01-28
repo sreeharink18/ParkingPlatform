@@ -29,8 +29,28 @@ namespace ParkingPlatform.Controllers
 
 
 
+        [HttpGet("get_all_parkingslot_by_gateid/{gate_id}")]
+        public async Task<IActionResult> GetAllParkingSlotByGate_Id(int gate_id)
+        {
+            var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAllAsync(v => v.GateId == gate_id );
+            if (parkingSlot == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parkingSlot);
+        }
+
+
+        [HttpGet("get_all_parkingslot_by_vehicletype/{vehicle_id}")]
+        public async Task<IActionResult> GetAllParkingSlotByVehicleType(int vehicle_id)
+        {
+            var parkingSlots = await _unitOfWork.ParkingSlotRepository.GetAllAsync( ps => ps.Gate.VehicleTypeId == vehicle_id);
+            return Ok(parkingSlots);
+        }
+
         [HttpGet("{parkingslot_id}")]
-        public async Task<IActionResult> GetVehicleById(int parkingslot_id)
+        public async Task<IActionResult> GetParkingSlotById(int parkingslot_id)
         {
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
             if (parkingSlot == null)
@@ -42,7 +62,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddVehicle([FromBody] ParkingSlotAddDto parkingslot)
+        public async Task<IActionResult> AddParkingSlot([FromBody] ParkingSlotAddDto parkingslot)
         {
             if (parkingslot == null)
             {
@@ -59,7 +79,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPut("{parkingslot_id}")]
-        public async Task<IActionResult> UpdateVehicle(int parkingslot_id, [FromBody] ParkingSlotAddDto parkingSlot)
+        public async Task<IActionResult> UpdateParkingSlot(int parkingslot_id, [FromBody] ParkingSlotAddDto parkingSlot)
         {
             if (parkingSlot == null)
             {
@@ -81,7 +101,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpDelete("{parkingslot_id}")]
-        public async Task<IActionResult> DeleteVehicle(int parkingslot_id)
+        public async Task<IActionResult> DeleteParkingSlot(int parkingslot_id)
         {
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);
             if (parkingSlot == null)

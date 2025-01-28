@@ -27,7 +27,7 @@ namespace ParkingPlatform.Controllers
             return Ok(vehicles);
         }
 
-
+       
 
         [HttpGet("{vehicle_id}")]
         public async Task<IActionResult> GetVehicleById(int vehicle_id)
