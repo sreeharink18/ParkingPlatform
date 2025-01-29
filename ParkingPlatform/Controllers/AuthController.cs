@@ -108,14 +108,9 @@ namespace ParkingPlatform.Controllers
                         await _roleManager.CreateAsync(new IdentityRole(StaticData.Role_Admin));
                         await _roleManager.CreateAsync(new IdentityRole(StaticData.Role_Customer));
                     }
-                    if (model.Role.ToUpper() == StaticData.Role_Admin)
-                    {
-                        await _userManager.AddToRoleAsync(newUserDto, StaticData.Role_Admin);
-                    }
-                    else
-                    {
+                    
                         await _userManager.AddToRoleAsync(newUserDto, StaticData.Role_Customer);
-                    }
+                    
                     return Ok(ApiResponseHelper.SuccessResponse("User is Register Successfully! Plz countinue..."));
                 }
             }

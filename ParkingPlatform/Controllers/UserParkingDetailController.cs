@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
@@ -12,6 +13,7 @@ namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserParkingDetailController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

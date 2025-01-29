@@ -8,10 +8,12 @@ using ParkingPlatform.Model.DTO.ParkingSlotDtosFolder;
 using ParkingPlatform.Model.DTO.GateDtosFolder;
 using ParkingPlatform.Model.DTO;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ParkingSlotController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -63,6 +65,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> AddParkingSlot([FromBody] ParkingSlotAddDto parkingslot)
         {
             if (parkingslot == null)
@@ -80,6 +83,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPut("{parkingslot_id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateParkingSlot(int parkingslot_id, [FromBody] ParkingSlotAddDto parkingSlot)
         {
             if (parkingSlot == null)
@@ -102,6 +106,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpDelete("{parkingslot_id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> DeleteParkingSlot(int parkingslot_id)
         {
             var parkingSlot = await _unitOfWork.ParkingSlotRepository.GetAsync(v => v.Id == parkingslot_id);

@@ -7,5 +7,14 @@
 
         public static string ParkingStatus_Available = "Available";
         public static string ParkingStatus_Engaged = "Engaged";
+
+        public enum ParkingStatus
+        {
+            Available,
+            Engaged
+        }
+      
+
     }
+
 }

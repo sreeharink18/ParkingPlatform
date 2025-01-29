@@ -7,6 +7,7 @@ using NETCore.MailKit.Core;
 using ParkingPlatform.DataAccess.Data;
 using ParkingPlatform.DataAccess.RepositoryPattern;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
+using ParkingPlatform.DbInitializeService;
 using ParkingPlatform.Model;
 using ParkingPlatform.Model.DTO.EmailDtosFolder;
 using System;
@@ -50,6 +51,8 @@ builder.Services.AddAuthentication(u =>
     };
 
 });
+
+//builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 // Add services to the container.
 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
@@ -59,6 +62,7 @@ builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 builder.Services.AddSingleton(emailConfig);
 builder.Services.AddScoped<IEmailServices,EmailServices>();
+
 
 builder.Services.AddCors();
 
@@ -109,9 +113,19 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*"));
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
+//SeedDatabase();
 app.MapControllers();
 
 app.Run();
+
+
+/*void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}*/

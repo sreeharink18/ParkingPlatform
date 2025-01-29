@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingPlatform.DataAccess.RepositoryPattern.IRepositoryPattern;
@@ -10,6 +11,7 @@ namespace ParkingPlatform.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VehicleController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -31,6 +33,7 @@ namespace ParkingPlatform.Controllers
        
 
         [HttpGet("{vehicle_id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> GetVehicleById(int vehicle_id)
         {
             var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
@@ -43,6 +46,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> AddVehicle([FromBody] VehicleTypeAddDto  vehicle)
         {
             if (vehicle == null)
@@ -57,6 +61,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpPut("{vehicle_id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateVehicle(int vehicle_id, [FromBody] VehicleTypeAddDto vehicle)
         {
             if (vehicle == null )
@@ -80,6 +85,7 @@ namespace ParkingPlatform.Controllers
         }
 
         [HttpDelete("{vehicle_id}")]
+        [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> DeleteVehicle(int vehicle_id)
         {
             var vehicle = await _unitOfWork.VehicleRepository.GetAsync(v=>v.Id== vehicle_id);
