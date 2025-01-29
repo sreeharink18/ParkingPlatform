@@ -53,8 +53,8 @@ namespace ParkingPlatform.DataAccess.RepositoryPattern
                     return $"<h2 style='color:green'>Password Reset OTP</h2><br/><p>Your reset OTP is: <strong>{content}</strong></p><br/><p>If you didn’t request this, please ignore this email.</p> ";
                 case "ParkingSlotCofirm":
                     return $"<h2 style='color:green'>Parking Slot Confirm</h2><br/><p>{content}</p><br/><p>Stay safe and take care!</p>";
-                case "CancelParkingSlot":
-                    return $"<h2 style='color:red'>Parking Slot Cancel</h2><br/><p>Dear User,</p><br/><p>{content}</p><br/> <p>Thank you for visit Parking Platform</p>";
+                case "ExitParkingSlot":
+                    return $"<h2 style='color:red'>Exit Parking Slot</h2><br/><p>Dear User,</p><br/><p>{content}</p><br/> <p>Thank you for visit Parking Platform</p>";
                 default:
                     return $"<p>{content}</p>";
             }
