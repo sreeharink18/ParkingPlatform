@@ -8,11 +8,11 @@ namespace ParkingPlatform.DbInitializeService
 {
     public class DbInitializer : IDbInitializer
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _db;
         public DbInitializer(
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             ApplicationDbContext db)
         {
@@ -51,7 +51,7 @@ namespace ParkingPlatform.DbInitializeService
                   
 
                 }, "Admin@123").GetAwaiter().GetResult();
-                ApplicationUser applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "adminLearnClub@gmail.com");
+                ApplicationUser applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin@gmail.com");
                 _userManager.AddToRoleAsync(applicationUser, StaticData.Role_Admin).GetAwaiter().GetResult();
 
             }

@@ -52,7 +52,7 @@ builder.Services.AddAuthentication(u =>
 
 });
 
-//builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 // Add services to the container.
 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
@@ -115,17 +115,17 @@ app.UseCors(o => o.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExpose
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-//SeedDatabase();
+SeedDatabase();
 app.MapControllers();
 
 app.Run();
 
 
-/*void SeedDatabase()
+void SeedDatabase()
 {
     using (var scope = app.Services.CreateScope())
     {
         var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
         dbInitializer.Initialize();
     }
-}*/
+}
